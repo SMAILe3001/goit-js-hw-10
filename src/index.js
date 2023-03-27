@@ -1,12 +1,10 @@
 import './css/styles.css';
-// import searchCantry from './js/fetchCountries';
+import searchCantry from './js/fetchCountries';
 import debounce from 'lodash.debounce';
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 
 const DEBOUNCE_DELAY = 300;
 const MAXIMUM_NUMBER_OF_COUNTRIES = 10;
-const FILTERS = '?fields=name,flags,capital,currency,population,languages';
-const BASE_URL = `https://restcountries.com/v3.1/name/`;
 
 const refs = {
   inputEl: document.querySelector('#search-box'),
@@ -19,22 +17,9 @@ refs.inputEl.addEventListener('input', debounce(searchCantrys, DEBOUNCE_DELAY));
 function searchCantrys(e) {
   let serchText = e.target.value.trim();
   if (!serchText) {
-    refs.ulEl.innerHTML = '';
-    refs.divEl.innerHTML = '';
     return;
   }
-  searchCantry(serchText);
-}
-
-function searchCantry(serchText) {
-  fetch(`${BASE_URL}${serchText}${FILTERS}`)
-    .then(response => {
-      if (!response.ok) {
-        throw new Error(response.status);
-      }
-
-      return response.json();
-    })
+  searchCantry(serchText)
     .then(data => {
       if (data.length === 1) {
         refs.divEl.innerHTML = countryInfo(data);
@@ -42,7 +27,7 @@ function searchCantry(serchText) {
         return;
       }
       if (data.length > MAXIMUM_NUMBER_OF_COUNTRIES) {
-        refs.ulEl.innerHTML = '';
+        clearContent();
         manyMatches();
         return;
       }
@@ -55,12 +40,16 @@ function searchCantry(serchText) {
 
 function onError() {
   Notify.failure(`Oops, there is no country with that name`);
-  refs.ulEl.innerHTML = '';
-  refs.divEl.innerHTML = '';
+  clearContent();
 }
 
 function manyMatches() {
   Notify.info(`Too many matches found. Please enter a more specific name.`);
+}
+
+function clearContent() {
+  refs.ulEl.innerHTML = '';
+  refs.divEl.innerHTML = '';
 }
 
 function countyList(countyList) {

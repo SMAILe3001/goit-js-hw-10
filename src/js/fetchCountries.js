@@ -1,33 +1,12 @@
-'use strict';
-
-import { Notify } from 'notiflix/build/notiflix-notify-aio';
-
+const FILTERS = '?fields=name,flags,capital,population,languages';
 const BASE_URL = `https://restcountries.com/v3.1/name/`;
-const MAXIMUM_NUMBER_OF_COUNTRIES = 10;
 
 export default function searchCantry(serchText) {
-  fetch(`${BASE_URL}${serchText}`)
-    .then(response => {
-      if (!response.ok) {
-        throw new Error(response.status);
-      }
+  return fetch(`${BASE_URL}${serchText}${FILTERS}`).then(response => {
+    if (!response.ok) {
+      throw new Error(response.statusText);
+    }
 
-      return response.json();
-    })
-    .then(data => {
-      if (data.length > MAXIMUM_NUMBER_OF_COUNTRIES) {
-        manyMatches();
-        return;
-      }
-      console.log(data);
-    })
-    .catch(onError);
-}
-
-function onError() {
-  Notify.failure(`Oops, there is no country with that name`);
-}
-
-function manyMatches() {
-  Notify.info(`Too many matches found. Please enter a more specific name.`);
+    return response.json();
+  });
 }
