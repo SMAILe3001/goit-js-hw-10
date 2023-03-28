@@ -1,0 +1,18 @@
+{{#each this}}
+  <div>
+    <img
+      width='50'
+      class='country-imager'
+      src='{{this.flags.svg}}'
+      alt='{{this.flags.alt}}'
+    />
+    <h2>{{this.name.common}}</h2>
+  </div>
+  <ul>
+    <li><h3>Capital: <span>{{this.capital}}</span></h3></li>
+    <li><h3>Population: <span>{{this.population}}</span></h3></li>
+    <li><h3>Languages:
+        <span>{{#each this.languages}}{{this}} {{/each}}</span></h3>
+    </li>
+  </ul>
+{{/each}}

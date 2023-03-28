@@ -2,6 +2,8 @@ import './css/styles.css';
 import searchCantry from './js/fetchCountries';
 import debounce from 'lodash.debounce';
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
+import listCountrie from './templates/list-countries.hbs';
+import infoCountrie from './templates/info-countries.hbs';
 
 const DEBOUNCE_DELAY = 300;
 const MAXIMUM_NUMBER_OF_COUNTRIES = 10;
@@ -22,18 +24,18 @@ function searchCantrys(e) {
   searchCantry(serchText)
     .then(data => {
       if (data.length === 1) {
-        refs.divEl.innerHTML = countryInfo(data);
+        refs.divEl.innerHTML = infoCountrie(data);
         refs.ulEl.innerHTML = '';
+        console.log(data);
         return;
       }
       if (data.length > MAXIMUM_NUMBER_OF_COUNTRIES) {
-        clearContent();
         manyMatches();
         return;
       }
 
-      refs.ulEl.innerHTML = countyList(data);
       refs.divEl.innerHTML = '';
+      refs.ulEl.innerHTML = listCountrie(data);
     })
     .catch(onError);
 }
@@ -45,59 +47,10 @@ function onError() {
 
 function manyMatches() {
   Notify.info(`Too many matches found. Please enter a more specific name.`);
+  clearContent();
 }
 
 function clearContent() {
   refs.ulEl.innerHTML = '';
   refs.divEl.innerHTML = '';
-}
-
-function countyList(countyList) {
-  return countyList
-    .map(
-      ({ flags: { svg }, flags: { alt }, name: { common } }) => `
-				<li class="country-item">			
-						<img
-            width = 50
-						class="country-imager"
-						src="${svg}"
-						alt=""${alt}"
-						/>
-            <h2>${common}</h2>				
-				</li>
-        	`
-    )
-    .join('');
-}
-
-function countryInfo(countryInfo) {
-  return countryInfo
-    .map(
-      ({
-        flags: { svg },
-        flags: { alt },
-        name: { common },
-        capital,
-        population,
-        languages,
-      }) => `
-      <div>
-					<img
-            width = 50
-						class="country-imager"
-						src="${svg}"
-						alt="${alt}"
-						/>
-            <h2>${common}</h2>	
-            </div>	
-            <ul>
-            <li><h3>Capital: <span>${capital}</span></h3></li>		<span></span>
-            <li><h3>Population: <span>${population}</span></h3></li>	
-            <li><h3>Languages: <span>${Object.values(
-              languages
-            )}</span></h3></li>
-            </ul>
-        	`
-    )
-    .join('');
 }
