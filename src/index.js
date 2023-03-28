@@ -17,6 +17,8 @@ const refs = {
 refs.inputEl.addEventListener('input', debounce(searchCantrys, DEBOUNCE_DELAY));
 
 function searchCantrys(e) {
+  clearContent();
+
   let serchText = e.target.value.trim();
   if (!serchText) {
     return;
@@ -25,8 +27,6 @@ function searchCantrys(e) {
     .then(data => {
       if (data.length === 1) {
         refs.divEl.innerHTML = infoCountrie(data);
-        refs.ulEl.innerHTML = '';
-        console.log(data);
         return;
       }
       if (data.length > MAXIMUM_NUMBER_OF_COUNTRIES) {
@@ -34,7 +34,6 @@ function searchCantrys(e) {
         return;
       }
 
-      refs.divEl.innerHTML = '';
       refs.ulEl.innerHTML = listCountrie(data);
     })
     .catch(onError);
@@ -42,12 +41,10 @@ function searchCantrys(e) {
 
 function onError() {
   Notify.failure(`Oops, there is no country with that name`);
-  clearContent();
 }
 
 function manyMatches() {
   Notify.info(`Too many matches found. Please enter a more specific name.`);
-  clearContent();
 }
 
 function clearContent() {
